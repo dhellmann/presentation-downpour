@@ -42,14 +42,162 @@ import re
       <div class="slides">
 
         <section>
-          <h2>Moving Workloads Between OpenStack Clouds with Ansible</h2>
-          <h3>Ansible Open Source Day @ OpenStack Summit May, 2017</h3>
-          <h4>Doug Hellmann</h4>
+          <h2>Downpour:<br/>Moving Workloads with Ansible</h2>
+          <h3>Ansible Open Source Day, May, 2017</h3>
+          <h4>Doug Hellmann, Red Hat</h4>
         </section>
 
         <section>
-          <h2>Create your other slides here</h2>
+          <h2>Our Requirements</h2>
+
+          <ul>
+            <li>Download all tenant data from one cloud</li>
+            <li>Upload it to another cloud</li>
+            <li>Retain relationships</li>
+            <li>Support multiple OpenStack versions</li>
+            <li>Be flexible</li>
+          </ul>
+
+          <aside class="notes">
+            <ul>
+              <li>Moving public/private</li>
+              <li>Moving between public cloud providers</li>
+              <li>Upgrades</li>
+            </ul>
+          </aside>
         </section>
+
+        <section>
+          <h2>Extremes in Use Cases</h2>
+
+          <table>
+            <thead>
+              <tr>
+                <th></th>
+                <th>Easy</th>
+                <th>Hard</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>Ownership</th>
+                <td>Admin</td>
+                <td>Tenant</td>
+              </tr>
+              <tr>
+                <th>Backend</th>
+                <td>Shared storage</td>
+                <td>Shared nothing</td>
+              </tr>
+              <tr>
+                <th>Applications</th>
+                <td>One per tenant</td>
+                <td>Rats nest</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <aside class="notes">
+            <ul>
+              <li>Shared storage: optimizations for moving block data</li>
+            </ul>
+          </aside>
+        </section>
+
+        <section>
+          <h2>Downpour</h2>
+
+          <ul>
+            <li>Only uses tenant privileges</li>
+            <li>Works on completely disconnected clouds</li>
+            <li>Selectively export part of a tenant's resources</li>
+            <li><em>Not</em> a live migration tool</li>
+          </ul>
+
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section>
+          <h2>Multi-phase approach</h2>
+
+          <ul>
+            <li>Select resources</li>
+            <li>Export</li>
+            <li>Import</li>
+            <li>Cleanup old resources</li>
+          </ul>
+
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section>
+          <h2><tt>downpour query</tt></h2>
+
+          <ul>
+            <li>Regular expressions</li>
+            <li>Flavor</li>
+            <li>Network?</li>
+            <li>Suggestions?</li>
+          </ul>
+
+          <aside class="notes">
+            <p>Phase I is to build up the set of resources to be
+            exported.</p>
+
+            <p>This is where we untangle the rats nest in a tenant
+            running several distinct applications.</p>
+          </aside>
+        </section>
+
+        <section>
+          <h2><tt>downpour export</tt></h2>
+
+          <ul>
+            <li>Explicitly listed resources</li>
+            <li>Automatic dependency resolution</li>
+          </ul>
+
+          <aside class="notes">
+            <p>Phase II exports the data listed in the control
+            file.</p>
+
+            <p>Pull in dependencies like networks, volumes, and images
+            automatically.</p>
+          </aside>
+        </section>
+
+        <section>
+          <h2><tt>ansible-playbook</tt></h2>
+
+          <ul>
+            <li>Idempotent</li>
+            <li>Someone else wrote it!</li>
+          </ul>
+
+          <aside class="notes">
+            <p>Phase III imports the data into the new cloud.</p>
+
+            <p>I didn't write this phase, since the export phase
+            generates an ansible playbook.</p>
+          </aside>
+        </section>
+
+
+<!--
+* Introduce self
+* Explain the problem space downpour addresses
+* Describe the features
+    * show some of the input and output files
+* Explain the architecture
+    * talk about doing the expensive work with images in the background
+    * talk about using generators to avoid having to manage a dependency graph myself
+* Talk about future work
+    * missing features
+    * collecting data from other cloud APIs
+    * emitting playbooks to talk to other cloud APIs
+-->
 
         <section>
           <h2>Resources</h2>
@@ -72,7 +220,9 @@ import re
             <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
               <img alt="Creative Commons License" src="img/cc-by-88x31.png" />
             </a><br>
-            <span>This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+            <span>This work is licensed under a <a rel="license"
+            href="http://creativecommons.org/licenses/by/4.0/">Creative
+            Commons Attribution 4.0 International License</a>.</span>
           </p>
         </section>
 
@@ -81,6 +231,7 @@ import re
 
     <script src="lib/js/head.min.js"></script>
     <script src="js/reveal.js"></script>
+	<script src="js/jquery-3.1.1.js"></script>
 	<script src="js/lineselect.js"></script>
 
     <script>
