@@ -7,7 +7,7 @@
 View This Presentation Online
 =============================
 
-https://doughellmann.com/presentations/downpour
+https://doughellmann.com/presentations/downpour-lightning-talk
 
 Requirements
 ============
