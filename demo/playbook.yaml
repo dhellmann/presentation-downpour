@@ -1,0 +1,85 @@
+---
+- connection: local
+  hosts: localhost
+  tasks:
+  - lineinfile:
+      create: 'yes'
+      dest: uuids.csv
+      insertbefore: BOF
+      line: '"Resource Type","Resource Name","Old","New"'
+      regexp: '"Resource Type","Resource Name","Old","New"'
+      state: present
+    name: Initializing UUID mapping file
+  - name: Add security group downpour-demo
+    os_security_group:
+      description: Demo group used for downpour
+      name: downpour-demo
+      state: present
+    register: sg001
+  - lineinfile:
+      dest: uuids.csv
+      insertafter: EOF
+      line: '"security group","downpour-demo","6deea469-54bd-4846-b12a
+      -79fa6b482280","{{sg001.secgroup.id}}"'
+      regexp: '"security group","downpour-demo","6deea469-54bd-4846-b1
+      2a-79fa6b482280"'
+      state: present
+    name: Map UUID for downpour-demo
+  - os_security_group_rule:
+      direction: ingress
+      ethertype: IPv4
+      port_range_max: 22
+      port_range_min: 22
+      protocol: tcp
+      security_group: downpour-demo
+      state: present
+  - os_security_group_rule:
+      direction: egress
+      ethertype: IPv4
+      protocol: null
+      security_group: downpour-demo
+      state: present
+  - os_security_group_rule:
+      direction: egress
+      ethertype: IPv6
+      protocol: null
+      security_group: downpour-demo
+      state: present
+  - os_security_group_rule:
+      direction: ingress
+      ethertype: IPv4
+      port_range_max: 443
+      port_range_min: 443
+      protocol: tcp
+      security_group: downpour-demo
+      state: present
+  - name: Create volume downpour-demo-tiny
+    os_volume:
+      display_description: null
+      display_name: downpour-demo-tiny
+      size: 1
+      state: present
+    register: vol002
+  - lineinfile:
+      dest: uuids.csv
+      insertafter: EOF
+      line: '"volume","downpour-demo-tiny","256868c6-441f-4cd3-96fd-bda92c33822c","{{vol002.volume.id}}"'
+      regexp: '"volume","downpour-demo-tiny","256868c6-441f-4cd3-96fd-bda92c33822c"'
+      state: present
+    name: Map UUID for downpour-demo-tiny
+  - name: Creating server downpour-demo-tiny
+    os_server:
+      name: downpour-demo-tiny
+      nics:
+      - private
+      state: present
+      volumes:
+      - downpour-demo-tiny
+    register: server003
+  - lineinfile:
+      dest: uuids.csv
+      insertafter: EOF
+      line: '"server","downpour-demo-tiny","89b0ca01-d4d5-44a4-b785-b4a8e2602c6f","{{server003.server.id}}"'
+      regexp: '"server","downpour-demo-tiny","89b0ca01-d4d5-44a4-b785-b4a8e2602c6f"'
+      state: present
+    name: Map UUID for downpour-demo-tiny

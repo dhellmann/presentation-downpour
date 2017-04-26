@@ -1,0 +1,3 @@
+# Resources to be exported by downpour
+servers:
+  - name: "downpour-demo-tiny"

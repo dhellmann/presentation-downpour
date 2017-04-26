@@ -1,4 +1,5 @@
 <!--[[[cog
+from tools.showcode import *
 import re
 ]]]-->
 <!--[[[end]]]-->
@@ -181,20 +182,11 @@ import re
         </section>
 
         <section>
-          <h2>Select Resources</h2>
-
-          
-
-          <aside class="notes">
-          </aside>
-        </section>
-
-        <section>
           <h2>Export</h2>
 
           <ul>
             <li><tt>downpour export</tt></li>
-            <li>Explicitly listed resources</li>
+            <li>Explicitly listed resources (image, volume, server)</li>
             <li>Automatic dependency resolution</li>
           </ul>
 
@@ -204,6 +196,25 @@ import re
 
             <p>Pull in dependencies like networks, volumes, and images
             automatically.</p>
+          </aside>
+        </section>
+
+        <section>
+          <h2>Export</h2>
+
+<!--[[[cog
+showcode('demo/resources.yaml')
+]]]-->
+<pre><code class="lineselect_selectable" data-trim data-noescape># Resources to be exported by downpour
+servers:
+  - name: "downpour-demo-tiny"</code></pre>
+
+<!--[[[end]]]-->
+
+          <aside class="notes">
+            <p>This is an example input file for the export phase. It
+            would normally be produced by running a query operation to
+            find resources and spell them out explicitly here.</p>
           </aside>
         </section>
 
@@ -221,6 +232,108 @@ import re
 
             <p>This is where Ansible comes in.</p>
           </aside>
+        </section>
+
+        <section>
+          <h2>Import</h2>
+
+<!--[[[cog
+showcode('demo/playbook.yaml', lines=(4, 12))
+]]]-->
+<pre><code class="lineselect_selectable" data-trim data-noescape>  tasks:
+  - lineinfile:
+      create: 'yes'
+      dest: uuids.csv
+      insertbefore: BOF
+      line: '"Resource Type","Resource Name","Old","New"'
+      regexp: '"Resource Type","Resource Name","Old","New"'
+      state: present
+    name: Initializing UUID mapping file</code></pre>
+
+<!--[[[end]]]-->
+
+          <aside class="notes">
+            <p>This part of is the playbook generated for the server
+            in the demo.</p>
+            <p>The first step is to create a file to track the UUID
+            changes.</p>
+          </aside>
+        </section>
+
+        <section>
+          <h2>Import</h2>
+
+<!--[[[cog
+showcode('demo/playbook.yaml', lines=(13, 27))
+]]]-->
+<pre><code class="lineselect_selectable" data-trim data-noescape>  - name: Add security group downpour-demo
+    os_security_group:
+      description: Demo group used for downpour
+      name: downpour-demo
+      state: present
+    register: sg001
+  - lineinfile:
+      dest: uuids.csv
+      insertafter: EOF
+      line: '"security group","downpour-demo","6deea469-54bd-4846-b12a
+      -79fa6b482280","{{sg001.secgroup.id}}"'
+      regexp: '"security group","downpour-demo","6deea469-54bd-4846-b1
+      2a-79fa6b482280"'
+      state: present
+    name: Map UUID for downpour-demo</code></pre>
+
+<!--[[[end]]]-->
+
+          <aside class="notes">
+            <p>Dependencies such as the security groups used by the
+            server are automatically included in the playbook without
+            needing to be specified.</p>
+            <p>Then the CSV file is updated with the line mapping the
+            name and old UUID to the new value.</p>
+            <p>Of course, the security group rules are included,
+            too.</p>
+          </aside>
+        </section>
+
+        <section>
+          <h2>Import</h2>
+
+<!--[[[cog
+showcode('demo/playbook.yaml', lines=(56, 62))
+]]]-->
+<pre><code class="lineselect_selectable" data-trim data-noescape>  - name: Create volume downpour-demo-tiny
+    os_volume:
+      display_description: null
+      display_name: downpour-demo-tiny
+      size: 1
+      state: present
+    register: vol002</code></pre>
+
+<!--[[[end]]]-->
+
+          <aside class="notes">
+            <p>Any volumes attached to the instance are also
+            recreated.</p>
+            <p>For now an empty volume is created. I'm still working
+            on the data upload.</p>
+          </aside>
+        </section>
+
+        <section>
+          <h2>Implementation</h2>
+
+        </section>
+
+        <section>
+          <h2>Help Wanted!</h2>
+
+          <ul>
+            <li>Query tool</li>
+            <li>Exporter</li>
+            <li>More use cases</li>
+            <li>Cinder API to upload/download volume contents</li>
+            <li>http://git.openstack.org/cgit/openstack/downpour</li>
+          </ul>
         </section>
 
         <section>
