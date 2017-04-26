@@ -355,6 +355,90 @@ showcode('demo/playbook.yaml', lines=(56, 62))
         </section>
 
         <section>
+          <h2><tt>Resolver</tt></h2>
+
+<!--[[[cog
+showcode('demo/resolver.py', lines=(124, 133), mark=[4, 9])
+]]]-->
+<pre><code class="lineselect_selectable" data-trim data-noescape>    def server(self, server, save_state):
+        for sg in server.security_groups:
+            sg_data = self.cloud.get_security_group(sg.name)
+<mark>            yield from self.security_group(sg_data)
+</mark>        vol_names = []
+        for vol in server.volumes:
+            vol_data = self.cloud.get_volume(vol.id)
+            vol_names.append(vol_data.name)
+<mark>            yield from self.volume(vol_data, save_state)
+</mark>        # ...</code></pre>
+
+<!--[[[end]]]-->
+
+          <aside class="notes">
+            <p>Normally that serialization would be done by walking a
+            graph structure. It turns out Python has a very nice
+            built-in syntax to simplify this. The Resolver is a
+            generator, which means the call stack can work as a
+            serializer.</p>
+          </aside>
+        </section>
+
+        <section>
+          <h2>Exporter</h2>
+
+<!--[[[cog
+showcode('demo/export.py', lines=(36, 49))
+]]]-->
+<pre><code class="lineselect_selectable" data-trim data-noescape>    to_export = resources.load(args.resource_file)
+    tasks = []
+
+    for image_info in to_export.images:
+        image = cloud.get_image(image_info.name)
+        tasks.extend(res.image(image))
+
+    for volume_info in to_export.volumes:
+        volume = cloud.get_volume(volume_info.name)
+        tasks.extend(res.volume(volume, save_state=volume_info.save_state))
+
+    for server_info in to_export.servers:
+        server = cloud.get_server(server_info.name)
+        tasks.extend(res.server(server, save_state=server_info.save_state))</code></pre>
+
+<!--[[[end]]]-->
+
+          <aside class="notes">
+            <p>The task list can then be built up incrementally by
+            combining the output of the generators for the primary
+            types of resources.</p>
+          </aside>
+        </section>
+
+        <section>
+          <h2>Exporter</h2>
+
+<!--[[[cog
+showcode('demo/export.py', lines=(51, 61))
+]]]-->
+<pre><code class="lineselect_selectable" data-trim data-noescape>    playbook = [
+        # The default playbook is configured to run instructions
+        # locally to talk to the cloud API.
+        {'hosts': 'localhost',
+         'connection': 'local',
+         'tasks': tasks,
+         },
+    ]
+    playbook_filename = os.path.join(output_path, 'playbook.yml')
+    with open(playbook_filename, 'w', encoding='utf-8') as fd:
+        yaml.dump(playbook, fd, default_flow_style=False, explicit_start=True)</code></pre>
+
+<!--[[[end]]]-->
+
+          <aside class="notes">
+            <p>And the output is produced by dumping the data
+            structure to YAML.</p>
+          </aside>
+        </section>
+
+        <section>
           <h2>Help Wanted!</h2>
 
           <ul>
