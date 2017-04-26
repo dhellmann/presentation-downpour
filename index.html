@@ -326,10 +326,31 @@ showcode('demo/playbook.yaml', lines=(56, 62))
 
           <aside class="notes">
             <ul>
-              <li>Resources are related in a graph</li>
+              <li>This graph shows the relationship of some of the
+              tenant-owned resources tied to server instances.</li>
               <li>The <tt>Resolver</tt> class handles those
               relationships</li>
             </ul>
+          </aside>
+        </section>
+
+        <section>
+          <h2>Playbook Ordering</h2>
+
+          <ol>
+            <li>Security group</li>
+            <li>Security group rules</li>
+            <li>Network</li>
+            <li>Subnet</li>
+            <li>Volume</li>
+            <li>Image</li>
+            <li>Instance</li>
+          </ol>
+
+          <aside class="notes">
+            <p>That tree structure needs to be serialized to produce a
+            playbook so that dependencies are created before the
+            things that use them.</p>
           </aside>
         </section>
 
