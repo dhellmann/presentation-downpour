@@ -101,14 +101,17 @@ module.exports = function(grunt) {
 		},
 
 		zip: {
-			'regexes-fear.zip': [
+			'downpour-lightning.zip': [
 				'index.html',
 				'css/**',
 				'js/**',
 				'lib/**',
 				'images/**',
+				'img/**',
 				'plugin/**',
-				'**.md'
+				'**.md',
+				'**.graphviz',
+				'**.svg'
 			]
 		},
 
