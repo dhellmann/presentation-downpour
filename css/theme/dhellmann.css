@@ -339,6 +339,8 @@ body {
   .reveal .slides section img {
     border: 0;
     box-shadow: none; }
+  .reveal .slides section .creativecommons {
+    font-size: 40%; }
 
 .reveal aside.controls-off {
   visibility: hidden; }
