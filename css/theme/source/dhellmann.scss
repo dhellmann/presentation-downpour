@@ -102,6 +102,11 @@ section.has-dark-background {
             margin: -.30em -.30em -.20em -.30em;
 			font-weight: bold;
         }
+
+		img {
+			border: 0;
+			box-shadow: none;
+		}
 	}
 
 	aside.controls-off {
