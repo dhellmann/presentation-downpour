@@ -68,7 +68,7 @@ import re
         </section>
 
         <section>
-          <h2>Extremes in Use Cases</h2>
+          <h2>Range of Use Cases</h2>
 
           <table>
             <thead>
@@ -98,20 +98,46 @@ import re
           </table>
 
           <aside class="notes">
-            <ul>
-              <li>Shared storage: optimizations for moving block data</li>
-            </ul>
+            <p>Shared storage: optimizations for moving block data</p>
+            <p>Downpour focuses on one end of that spectrum.</p>
           </aside>
         </section>
 
         <section>
-          <h2>Downpour</h2>
+          <h2>Tenant ACLs</h2>
+
+          <p>No admin credentials are needed.</p>
+
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section>
+          <h2>Shared Nothing</h2>
+
+          <p>Works on completely disconnected clouds.</p>
+
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section>
+          <h2>Multi-application Tenant</h2>
+
+          <p>Export a subset of a tenant's resources.</p>
+
+          <aside class="notes">
+          </aside>
+        </section>
+
+        <section>
+          <h2>Trade-offs</h2>
 
           <ul>
-            <li>Only uses tenant privileges</li>
-            <li>Works on completely disconnected clouds</li>
-            <li>Selectively export part of a tenant's resources</li>
-            <li><em>Not</em> a live migration tool</li>
+            <li><em>Not</em> a live migration tool.</li>
+            <li>The tool does not prevent application disruption.</li>
+            <li>Requires full data export.</li>
+            <li>UUIDs are not preserved.</li>
           </ul>
 
           <aside class="notes">
@@ -129,6 +155,8 @@ import re
           </ul>
 
           <aside class="notes">
+            <p>At each phase there is an opportunity to stop and
+            revise the inputs and outputs manually.</p>
           </aside>
         </section>
 
@@ -149,6 +177,15 @@ import re
 
             <p>This is where we untangle the rats nest in a tenant
             running several distinct applications.</p>
+          </aside>
+        </section>
+
+        <section>
+          <h2>Select Resources</h2>
+
+          
+
+          <aside class="notes">
           </aside>
         </section>
 
@@ -182,8 +219,7 @@ import re
           <aside class="notes">
             <p>Phase III imports the data into the new cloud.</p>
 
-            <p>I didn't write this phase, since the export phase
-            generates an ansible playbook.</p>
+            <p>This is where Ansible comes in.</p>
           </aside>
         </section>
 
