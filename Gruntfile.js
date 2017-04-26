@@ -149,7 +149,7 @@ module.exports = function(grunt) {
 		exec: {
 			rsync: './bin/rsync.sh',
 			cog: 'cog.py -r index.html',
-			graphviz: 'dot -O -Tpng *.graphviz'
+			graphviz: 'dot -O -Tsvg *.graphviz'
 		}
 
 	});
