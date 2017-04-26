@@ -32,9 +32,9 @@ $linkColorHover: lighten( $linkColor, 20% );
 $selectionBackgroundColor: rgba(0, 0, 0, 0.99);
 
 section.has-dark-background {
-	&, h1, h2, h3, h4, h5, h6 {
-		color: #fff;
-	}
+    &, h1, h2, h3, h4, h5, h6 {
+        color: #fff;
+    }
 }
 
 
@@ -47,70 +47,70 @@ section.has-dark-background {
 */
 
 .reveal {
-	h1, h2, h3, h4, h5, h6 {
-		&.left {
-			text-align: left;
-			margin-left: 1em;
-		}
-		&.code, & tt {
-			font-family: Monaco, monospace;
-		}
-	}
+    h1, h2, h3, h4, h5, h6 {
+        &.left {
+            text-align: left;
+            margin-left: 1em;
+        }
+        &.code, & tt {
+            font-family: Monaco, monospace;
+        }
+    }
 
-	tt {
-		font-family: Monaco, monospace;
-	}
+    tt {
+        font-family: Monaco, monospace;
+    }
 
-	pre {
-		width: 98%;
-	}
+    pre {
+        width: 98%;
+    }
 
-	small {
-		font-size: 0.5em;
-	}
+    small {
+        font-size: 0.5em;
+    }
 
-	.slides section {
+    .slides section {
 
-		.fragment.highlight-yellow, .fragment.highlight-current-yellow {
-			opacity: 1;
-			visibility: inherit;
-		}
+        .fragment.highlight-yellow, .fragment.highlight-current-yellow {
+            opacity: 1;
+            visibility: inherit;
+        }
 
-		.fragment.highlight-yellow.visible {
-			background-color: yellow;
-			border: 3px solid black;
-		}
+        .fragment.highlight-yellow.visible {
+            background-color: yellow;
+            border: 3px solid black;
+        }
 
-		.fragment.highlight-current-yellow.current-fragment {
-			background-color: yellow;
-			border: 3px solid black;
-		}
+        .fragment.highlight-current-yellow.current-fragment {
+            background-color: yellow;
+            border: 3px solid black;
+        }
 
-		/* lineselect.js */
-		pre span.selected {
+        /* lineselect.js */
+        pre span.selected {
             border: .15em solid #f66;
             padding: .15em .15em .05em .15em;
             margin: -.30em -.30em -.20em -.30em;
-			font-weight: bold;
+            font-weight: bold;
         }
 
-		/* lineselect.js */
-		code span.selected {
+        /* lineselect.js */
+        code span.selected {
             border: .15em solid yellow;
-			background-color: yellow;
+            background-color: yellow;
             padding: .15em .15em .05em .15em;
             margin: -.30em -.30em -.20em -.30em;
-			font-weight: bold;
+            font-weight: bold;
         }
 
-		img {
-			border: 0;
-			box-shadow: none;
-		}
-	}
+        img {
+            border: 0;
+            box-shadow: none;
+        }
+    }
 
-	aside.controls-off {
-		visibility: hidden;
-	}
+    aside.controls-off {
+        visibility: hidden;
+    }
 
 }
