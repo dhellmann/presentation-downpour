@@ -135,7 +135,7 @@ module.exports = function(grunt) {
 				livereload: true
 			},
 			graphviz: {
-				files: [ 'relationships.graphviz' ],
+				files: [ '*.graphviz' ],
 				tasks: 'exec:graphviz',
 			}
 		},
@@ -149,7 +149,7 @@ module.exports = function(grunt) {
 		exec: {
 			rsync: './bin/rsync.sh',
 			cog: 'cog.py -r index.html',
-			graphviz: 'dot -O -Tpng relationships.graphviz'
+			graphviz: 'dot -O -Tpng *.graphviz'
 		}
 
 	});
