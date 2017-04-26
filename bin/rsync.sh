@@ -2,7 +2,7 @@
 
 set -x
 
-FILES="*.html css js lib plugin"
+FILES="*.html css js lib plugin *.svg img"
 
 ssh doughellmann.com 'mkdir -p ~/doughellmann.com/presentations/downpour-lightning-talk'
 
