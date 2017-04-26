@@ -1,0 +1,14 @@
+digraph Resources {
+  rankdir = "BT";
+  SG [ label = "Security Group" ];
+  SGR [ label = "Security Group Rule" ];
+  V [ label = "Volume" ];
+  I [ label = "Instance" ];
+  N [ label = "Network" ];
+  SN [ label = "Subnet" ];
+  I -> SG;
+  I -> V;
+  I -> N;
+  N -> SN;
+  SG -> SGR;
+}
