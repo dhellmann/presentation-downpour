@@ -141,7 +141,8 @@ import re
           <ul>
             <li><em>Not</em> a live migration tool.</li>
             <li>The tool does not prevent application disruption.</li>
-            <li>Requires full data export.</li>
+            <li>Requires full data export & import (copy-on-write
+            benefits lost).</li>
             <li>UUIDs are not preserved.</li>
           </ul>
 
@@ -170,7 +171,7 @@ import re
 
           <ul>
             <li><tt>downpour query</tt></li>
-            <li>Regular expressions</li>
+            <li>Name patterns</li>
             <li>Flavor</li>
             <li>Network?</li>
             <li>Suggestions?</li>
@@ -445,21 +446,24 @@ showcode('demo/export.py', lines=(51, 61))
         <section>
           <h2>Resource Types</h2>
 
-          <p><strong>Supported:</strong> public keys, security groups,<br/>
-          networks & subnets, images</p>
+          <p><strong>Supported:</strong> public keys, security
+          groups,<br/> networks & subnets, images, available volumes,
+          servers</p>
 
-          <p><strong>Needs work:</strong> volumes, servers, floating
-          IPs</p>
+          <p><strong>Needs work:</strong> attached volumes, floating
+          IPs, routers</p>
         </section>
 
         <section>
           <h2>Help Wanted!</h2>
 
           <ul>
-            <li>Query tool</li>
-            <li>Exporter</li>
+            <li>More filters for the query tool</li>
+            <li>Exporter, especially servers with volumes</li>
             <li>More use cases</li>
-            <li>Cinder API to upload/download volume contents</li>
+            <li>Cleanup tool</li>
+            <li><em>Cinder API to upload/download volume
+            contents</em></li>
           </ul>
 
           <aside class="notes">
