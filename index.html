@@ -49,6 +49,15 @@ import re
         </section>
 
         <section>
+          <h2>Use Cases</h2>
+          <ul>
+            <li>Moving public <-> private</li>
+            <li>Moving between public cloud providers</li>
+            <li>Moving between private clouds during upgrades</li>
+          </ul>
+        </section>
+
+        <section>
           <h2>Our Requirements</h2>
 
           <ul>
@@ -56,16 +65,8 @@ import re
             <li>Upload it to another cloud</li>
             <li>Retain relationships</li>
             <li>Support multiple OpenStack versions</li>
-            <li>Be flexible</li>
+            <li>Accommodate differences in clouds</li>
           </ul>
-
-          <aside class="notes">
-            <ul>
-              <li>Moving public/private</li>
-              <li>Moving between public cloud providers</li>
-              <li>Upgrades</li>
-            </ul>
-          </aside>
         </section>
 
         <section>
@@ -81,19 +82,19 @@ import re
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <th>Ownership</th>
+              <tr class="fragment highlight-current-yellow">
+                <th>Permissions</th>
                 <td>Operator</td>
                 <td>Admin</td>
                 <td>Tenant</td>
               </tr>
-              <tr>
+              <tr class="fragment highlight-current-yellow">
                 <th>Backend</th>
                 <td>Shared storage</td>
                 <td>Fast interconnect</td>
                 <td>Shared nothing</td>
               </tr>
-              <tr>
+              <tr class="fragment highlight-current-yellow">
                 <th>Applications</th>
                 <td>One per tenant</td>
                 <td>Multi-app with naming conventions</td>
@@ -101,38 +102,24 @@ import re
               </tr>
             </tbody>
           </table>
-
-          <aside class="notes">
-            <p>Shared storage: optimizations for moving block data</p>
-            <p>Downpour focuses on one end of that spectrum.</p>
-          </aside>
         </section>
 
         <section>
           <h2>Tenant ACLs</h2>
 
           <p>No admin credentials are needed.</p>
-
-          <aside class="notes">
-          </aside>
         </section>
 
         <section>
           <h2>Shared Nothing</h2>
 
           <p>Works on completely disconnected clouds.</p>
-
-          <aside class="notes">
-          </aside>
         </section>
 
         <section>
           <h2>Multi-application Tenant</h2>
 
           <p>Export a subset of a tenant's resources.</p>
-
-          <aside class="notes">
-          </aside>
         </section>
 
         <section>
@@ -145,198 +132,135 @@ import re
             benefits lost).</li>
             <li>UUIDs are not preserved.</li>
           </ul>
-
-          <aside class="notes">
-          </aside>
         </section>
 
         <section>
           <h2>Multi-phase approach</h2>
 
-          <ul>
+          <ol>
             <li>Select resources</li>
             <li>Export</li>
             <li>Import</li>
             <li>Cleanup old resources</li>
-          </ul>
+          </ol>
 
-          <aside class="notes">
-            <p>At each phase there is an opportunity to stop and
-            revise the inputs and outputs manually.</p>
-          </aside>
+          <p>Review and edit output of each step</p>
         </section>
 
         <section>
-          <h2>Select Resources</h2>
+          <h2><tt>downpour query</tt></h2>
 
-          <ul>
-            <li><tt>downpour query</tt></li>
-            <li>Name patterns</li>
-            <li>Flavor</li>
-            <li>Network?</li>
-            <li>Suggestions?</li>
-          </ul>
+          <p>Untangle distinct applications in a single tenant</p>
 
-          <aside class="notes">
-            <p>Phase I is to build up the set of resources to be
-            exported.</p>
+<pre><code class="lineselect_selectable" data-trim data-noescape>$ downpour query --server-name '*demo*' demo/servers.yml
+[2017-05-05 18:53:03,180] loading resource list from demo/servers.yml
+[2017-05-05 18:53:03,181] searching for servers matching pattern '*demo*'
+[2017-05-05 18:53:24,368] found server downpour-demo-tiny to export
 
-            <p>This is where we untangle the rats nest in a tenant
-            running several distinct applications.</p>
-          </aside>
-        </section>
-
-        <section>
-          <h2>Export</h2>
-
-          <ul>
-            <li><tt>downpour export</tt></li>
-            <li>Explicitly listed resources (image, volume, server)</li>
-            <li>Automatic dependency resolution</li>
-          </ul>
-
-          <aside class="notes">
-            <p>Phase II exports the data listed in the control
-            file.</p>
-
-            <p>Pull in dependencies like networks, volumes, and images
-            automatically.</p>
-          </aside>
-        </section>
-
-        <section>
-          <h2>Export</h2>
-
-<!--[[[cog
-showcode('demo/resources.yaml')
-]]]-->
-<pre><code class="lineselect_selectable" data-trim data-noescape># Resources to be exported by downpour
+$ cat demo/servers.yml
+images: []
+keypairs: []
 servers:
-  - name: "downpour-demo-tiny"</code></pre>
-
-<!--[[[end]]]-->
-
-          <aside class="notes">
-            <p>This is an example input file for the export phase. It
-            would normally be produced by running a query operation to
-            find resources and spell them out explicitly here.</p>
-          </aside>
+-   key_name: downpour-demo
+    name: downpour-demo-tiny
+    save_state: false
+volumes: []
+</code></pre>
         </section>
 
         <section>
-          <h2>Import</h2>
+          <h2><tt>downpour export</tt></h2>
 
-          <ul>
-            <li><em>Spoiler alert:</em> <tt>ansible-playbook</tt></li>
-            <li>Idempotent</li>
-            <li>Someone else wrote it!</li>
-          </ul>
+          <p>Explicit resources and dependencies</p>
 
-          <aside class="notes">
-            <p>Phase III imports the data into the new cloud.</p>
-
-            <p>This is where Ansible comes in.</p>
-          </aside>
+<pre><code class="lineselect_selectable" data-trim data-noescape>$ downpour export demo/servers.yml demo/export
+[2017-05-05 18:58:02,874] loading resource list from demo/servers.yml
+[2017-05-05 18:58:05,414] scheduling download of image xenial-server-cloudimg-amd64-disk1
+[2017-05-05 18:58:05,434] wrote playbook to demo/export/playbook.yml
+[2017-05-05 18:58:05,434] downloading image xenial-server-cloudimg-amd64-disk1
+to demo/export/xenial-server-cloudimg-amd64-disk1.dat
+100% |######################################| 99.9 MiB/s Time: 0:00:02
+[2017-05-05 18:58:13,327] downloaded image xenial-server-cloudimg-amd64-disk1 to
+demo/export/xenial-server-cloudimg-amd64-disk1.dat
+</code></pre>
         </section>
 
         <section>
-          <h2>Import</h2>
+          <h2><tt>ansible-playbook</tt></h2>
+
+<pre><code class="lineselect_selectable" data-trim data-noescape>$ ansible-playbook playbook.yml
+PLAY [localhost] *********************************************
+TASK [Gathering Facts] ***************************************
+ok: [localhost]
+TASK [Initializing UUID mapping file] ************************
+ok: [localhost]
+TASK [Add public key downpour-demo] **************************
+ok: [localhost]
+TASK [Map UUID for keypair downpour-demo] ********************
+ok: [localhost]
+TASK [Add security group downpour-demo] **********************
+ok: [localhost]
+TASK [Map UUID for security group downpour-demo] *************
+changed: [localhost]
+...
+</code></pre>
+        </section>
+
+        <section>
+          <h2>Playbook Contents</h2>
+
+          <p>Dependencies included automatically</p>
+          <p>CSV File for mapping UUIDs</p>
 
 <!--[[[cog
-showcode('demo/playbook.yaml', lines=(4, 12))
-]]]-->
-<pre><code class="lineselect_selectable" data-trim data-noescape>  tasks:
-  - lineinfile:
-      create: 'yes'
-      dest: uuids.csv
-      insertbefore: BOF
-      line: '"Resource Type","Resource Name","Old","New"'
-      regexp: '"Resource Type","Resource Name","Old","New"'
-      state: present
-    name: Initializing UUID mapping file</code></pre>
-
-<!--[[[end]]]-->
-
-          <aside class="notes">
-            <p>This part of is the playbook generated for the server
-            in the demo.</p>
-            <p>The first step is to create a file to track the UUID
-            changes.</p>
-          </aside>
-        </section>
-
-        <section>
-          <h2>Import</h2>
-
-<!--[[[cog
-showcode('demo/playbook.yaml', lines=(13, 27))
+showcode('demo/playbook.yaml', lines=(26, 38))
 ]]]-->
 <pre><code class="lineselect_selectable" data-trim data-noescape>  - name: Add security group downpour-demo
     os_security_group:
       description: Demo group used for downpour
       name: downpour-demo
       state: present
-    register: sg001
+    register: sg002
   - lineinfile:
       dest: uuids.csv
       insertafter: EOF
-      line: '"security group","downpour-demo","6deea469-54bd-4846-b12a
-      -79fa6b482280","{{sg001.secgroup.id}}"'
-      regexp: '"security group","downpour-demo","6deea469-54bd-4846-b1
-      2a-79fa6b482280"'
+      line: '"security group","downpour-demo","3c7dcb77-d9ac-4af1-ba95-3f5d89a85227","{{sg002.secgroup.id}}"'
+      regexp: '"security group","downpour-demo","3c7dcb77-d9ac-4af1-ba95-3f5d89a85227"'
       state: present
-    name: Map UUID for downpour-demo</code></pre>
+    name: Map UUID for security group downpour-demo</code></pre>
 
 <!--[[[end]]]-->
-
-          <aside class="notes">
-            <p>Dependencies such as the security groups used by the
-            server are automatically included in the playbook without
-            needing to be specified.</p>
-            <p>Then the CSV file is updated with the line mapping the
-            name and old UUID to the new value.</p>
-            <p>Of course, the security group rules are included,
-            too.</p>
-          </aside>
         </section>
 
         <section>
-          <h2>Import</h2>
+          <h2>Playbook Contents</h2>
+          <p>Networks and subnets</p>
 
 <!--[[[cog
-showcode('demo/playbook.yaml', lines=(56, 62))
+showcode('demo/playbook.yaml', lines=(71, 84))
 ]]]-->
-<pre><code class="lineselect_selectable" data-trim data-noescape>  - name: Create volume downpour-demo-tiny
-    os_volume:
-      display_description: null
-      display_name: downpour-demo-tiny
-      size: 1
+<pre><code class="lineselect_selectable" data-trim data-noescape>  - name: Create network private
+    os_network:
+      external: false
+      name: private
+      shared: false
       state: present
-    register: vol002</code></pre>
+    register: net003
+  - lineinfile:
+      dest: uuids.csv
+      insertafter: EOF
+      line: '"network","private","56a86bdb-13b2-4c9f-b8f5-a942d52602b5","{{net003.network.id}}"'
+      regexp: '"network","private","56a86bdb-13b2-4c9f-b8f5-a942d52602b5"'
+      state: present
+    name: Map UUID for network private</code></pre>
 
 <!--[[[end]]]-->
-
-          <aside class="notes">
-            <p>Any volumes attached to the instance are also
-            recreated.</p>
-            <p>For now an empty volume is created. I'm still working
-            on the data upload.</p>
-          </aside>
         </section>
 
         <section>
           <h2>Resource Relationships</h2>
 
           <p><img src="relationships.graphviz.svg"/></p>
-
-          <aside class="notes">
-            <ul>
-              <li>This graph shows the relationship of some of the
-              tenant-owned resources tied to server instances.</li>
-              <li>The <tt>Resolver</tt> class handles those
-              relationships</li>
-            </ul>
-          </aside>
         </section>
 
         <section>
@@ -351,16 +275,13 @@ showcode('demo/playbook.yaml', lines=(56, 62))
             <li>Image</li>
             <li>Instance</li>
           </ol>
-
-          <aside class="notes">
-            <p>That tree structure needs to be serialized to produce a
-            playbook so that dependencies are created before the
-            things that use them.</p>
-          </aside>
         </section>
 
         <section>
           <h2><tt>Resolver</tt></h2>
+
+          <p>A Python generator that uses the call stack to serialize
+          the graph</p>
 
 <!--[[[cog
 showcode('demo/resolver.py', lines=(124, 133), mark=[4, 9])
@@ -377,18 +298,12 @@ showcode('demo/resolver.py', lines=(124, 133), mark=[4, 9])
 </mark>        # ...</code></pre>
 
 <!--[[[end]]]-->
-
-          <aside class="notes">
-            <p>Normally that serialization would be done by walking a
-            graph structure. It turns out Python has a very nice
-            built-in syntax to simplify this. The Resolver is a
-            generator, which means the call stack can work as a
-            serializer.</p>
-          </aside>
         </section>
 
         <section>
           <h2>Exporter</h2>
+
+          <p>The task list is built incrementally</p>
 
 <!--[[[cog
 showcode('demo/export.py', lines=(36, 49))
@@ -409,16 +324,12 @@ showcode('demo/export.py', lines=(36, 49))
         tasks.extend(res.server(server, save_state=server_info.save_state))</code></pre>
 
 <!--[[[end]]]-->
-
-          <aside class="notes">
-            <p>The task list can then be built up incrementally by
-            combining the output of the generators for the primary
-            types of resources.</p>
-          </aside>
         </section>
 
         <section>
           <h2>Exporter</h2>
+
+          <p>Before being dumped to YAML</p>
 
 <!--[[[cog
 showcode('demo/export.py', lines=(51, 61))
@@ -436,11 +347,6 @@ showcode('demo/export.py', lines=(51, 61))
         yaml.dump(playbook, fd, default_flow_style=False, explicit_start=True)</code></pre>
 
 <!--[[[end]]]-->
-
-          <aside class="notes">
-            <p>And the output is produced by dumping the data
-            structure to YAML.</p>
-          </aside>
         </section>
 
         <section>
@@ -465,10 +371,6 @@ showcode('demo/export.py', lines=(51, 61))
             <li><em>Cinder API to upload/download volume
             contents</em></li>
           </ul>
-
-          <aside class="notes">
-            <p>What's next? [review list]</p>
-          </aside>
         </section>
 
         <section>
